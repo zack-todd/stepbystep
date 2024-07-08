@@ -1,0 +1,254 @@
+Prerequisites
+Ensure you have Node.js installed on your machine. You can install the required packages using npm:
+npm install express mysql2
+
+Step 1: Setting Up the Project
+Create a new project folder.
+Open a terminal and navigate to the project folder.
+Initialize a new Node.js project:
+npm init -y
+
+Install the necessary packages:
+npm install express mysql2
+
+Step 2: Application Setup
+Create a new JavaScript file called app.js.
+Import the required modules and set up the Express application:
+const express = require('express');
+const mysql = require('mysql2');
+
+const app = express();
+const port = 5000;
+
+const db = mysql.createConnection({
+    host: 'localhost',
+    user: 'root',
+    password: 'c0nygre',
+    database: 'conygre'
+});
+
+db.connect(err => {
+    if (err) {
+        console.error('Error connecting to the database:', err);
+        return;
+    }
+    console.log('Connected to the MySQL database.');
+});
+
+app.use(express.json());
+
+app.listen(port, () => {
+    console.log(`Server is running on port ${port}`);
+});
+
+Step 3: Implementing CRUD Functionality
+Define the routes for the CRUD operations:
+// Retrieve all items
+app.get('/items', (req, res) => {
+    db.query('SELECT * FROM compact_discs', (err, results) => {
+        if (err) {
+            res.status(500).json({ error: err });
+        } else {
+            res.json(results);
+        }
+    });
+});
+
+// Retrieve a specific item by ID
+app.get('/items/:item_id', (req, res) => {
+    const { item_id } = req.params;
+    db.query('SELECT * FROM compact_discs WHERE id = ?', [item_id], (err, results) => {
+        if (err) {
+            res.status(500).json({ error: err });
+        } else {
+            res.json(results[0]);
+        }
+    });
+});
+
+// Create a new item
+app.post('/items', (req, res) => {
+    const { title, artist, price, tracks } = req.body;
+    const query = 'INSERT INTO compact_discs (title, artist, price, tracks) VALUES (?, ?, ?, ?)';
+    db.query(query, [title, artist, price, tracks], (err, results) => {
+        if (err) {
+            res.status(500).json({ error: err });
+        } else {
+            res.status(201).json({ message: 'Item created successfully', item_id: results.insertId });
+        }
+    });
+});
+
+// Update an existing item
+app.put('/items/:item_id', (req, res) => {
+    const { item_id } = req.params;
+    const { title, artist, price, tracks } = req.body;
+    const query = 'UPDATE compact_discs SET title = ?, artist = ?, price = ?, tracks = ? WHERE id = ?';
+    db.query(query, [title, artist, price, tracks, item_id], (err, results) => {
+        if (err) {
+            res.status(500).json({ error: err });
+        } else {
+            res.json({ message: 'Item updated successfully' });
+        }
+    });
+});
+
+// Delete an item
+app.delete('/items/:item_id', (req, res) => {
+    const { item_id } = req.params;
+    db.query('DELETE FROM compact_discs WHERE id = ?', [item_id], (err, results) => {
+        if (err) {
+            res.status(500).json({ error: err });
+        } else {
+            res.json({ message: 'Item deleted successfully' });
+        }
+    });
+});
+
+
+Step 4: Running the Application
+Run the Express application by executing the following command:
+node app.js
+
+
+The application will start running on a local server at http://localhost:5000.
+
+Creating Test .rest Files for REST Client Extension in VS Code
+To test the functionality of the RESTful CRUD Express application, follow these steps to create .rest files:
+
+Create a new folder in your project directory and name it tests.
+
+In the tests folder, create a new file named get_all_items.rest and add the following content:
+GET http://localhost:5000/items
+
+
+Repeat the steps above to create the following .rest files:
+get_item_by_id.rest
+GET http://localhost:5000/items/1
+
+
+create_item.rest
+POST http://localhost:5000/items
+Content-Type: application/json
+
+{
+    "title": "New Album",
+    "artist": "New Artist",
+    "price": 9.99,
+    "tracks": 10
+}
+
+
+update_item.rest
+PUT http://localhost:5000/items/10
+Content-Type: application/json
+
+{
+    "title": "Updated Album",
+    "artist": "Updated Artist",
+    "price": 11.99,
+    "tracks": 12
+}
+
+
+delete_item.rest
+DELETE http://localhost:5000/items/10
+
+Step 5: Run Test Requests
+Open the .rest file you want to test (e.g., get_all_items.rest) in VS Code.
+Click on the "Send Request" button next to the request URL.
+Observe the response in the VS Code output panel.
+Repeat the steps for the other .rest files you created.
+Complete JavaScript File
+Here is the complete app.js file for your reference:
+const express = require('express');
+const mysql = require('mysql2');
+
+const app = express();
+const port = 5000;
+
+const db = mysql.createConnection({
+    host: 'localhost',
+    user: 'root',
+    password: 'c0nygre',
+    database: 'conygre'
+});
+
+db.connect(err => {
+    if (err) {
+        console.error('Error connecting to the database:', err);
+        return;
+    }
+    console.log('Connected to the MySQL database.');
+});
+
+app.use(express.json());
+
+app.get('/items', (req, res) => {
+    db.query('SELECT * FROM compact_discs', (err, results) => {
+        if (err) {
+            res.status(500).json({ error: err });
+        } else {
+            res.json(results);
+        }
+    });
+});
+
+app.get('/items/:item_id', (req, res) => {
+    const { item_id } = req.params;
+    db.query('SELECT * FROM compact_discs WHERE id = ?', [item_id], (err, results) => {
+        if (err) {
+            res.status(500).json({ error: err });
+        } else {
+            res.json(results[0]);
+        }
+    });
+});
+
+app.post('/items', (req, res) => {
+    const { title, artist, price, tracks } = req.body;
+    const query = 'INSERT INTO compact_discs (title, artist, price, tracks) VALUES (?, ?, ?, ?)';
+    db.query(query, [title, artist, price, tracks], (err, results) => {
+        if (err) {
+            res.status(500).json({ error: err });
+        } else {
+            res.status(201).json({ message: 'Item created successfully', item_id: results.insertId });
+        }
+    });
+});
+
+app.put('/items/:item_id', (req, res) => {
+    const { item_id } = req.params;
+    const { title, artist, price, tracks } = req.body;
+    const query = 'UPDATE compact_discs SET title = ?, artist = ?, price = ?, tracks = ? WHERE id = ?';
+    db.query(query, [title, artist, price, tracks, item_id], (err, results) => {
+        if (err) {
+            res.status(500).json({ error: err });
+        } else {
+            res.json({ message: 'Item updated successfully' });
+        }
+    });
+});
+
+app.delete('/items/:item_id', (req, res) => {
+    const { item_id } = req.params;
+    db.query('DELETE FROM compact_discs WHERE id = ?', [item_id], (err, results) => {
+        if (err) {
+            res.status(500).json({ error: err });
+        } else {
+            res.json({ message: 'Item deleted successfully' });
+        }
+    });
+});
+
+app.listen(port, () => {
+    console.log(`Server is running on port ${port}`);
+});
+
+
+This setup will allow you to create a RESTful CRUD application using Node.js and Express, and test it using the REST Client extension in VS Code.
+
+
+
+
+

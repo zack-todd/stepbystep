@@ -1,0 +1,176 @@
+Prerequisites
+Ensure you have Node.js installed on your machine. You can install the mysql2 package using npm:
+
+npm install mysql2
+
+
+Step 0: Setting up the Database
+This step involves using MySQL commands and does not change. You will need to set up your MySQL database as described.
+
+Step 1: Setting Up the Project
+Create a new folder for the exercise.
+Open a text editor (e.g., Visual Studio Code).
+Create a new JavaScript file with a .js extension (e.g., access_compact_discs.js).
+Step 2: Importing Required Modules
+const mysql = require('mysql2/promise');
+
+tep 3: Connecting to the MySQL Database
+async function connectToDatabase() {
+    const db = await mysql.createConnection({
+        host: 'localhost',
+        user: 'root',
+        password: 'c0nygre',
+        database: 'conygre'
+    });
+    return db;
+}
+
+
+Step 4: Retrieving Compact Discs
+async function retrieveCompactDiscs(db) {
+    const [rows] = await db.execute('SELECT * FROM compact_discs');
+    console.log("Retrieved Compact Discs:");
+    rows.forEach(cd => {
+        console.log(cd);
+    });
+}
+
+Step 5: Testing the Retrieval
+async function testRetrieval() {
+    const db = await connectToDatabase();
+    await retrieveCompactDiscs(db);
+    await db.end();
+}
+
+testRetrieval();
+async function testRetrieval() {
+    const db = await connectToDatabase();
+    await retrieveCompactDiscs(db);
+    await db.end();
+}
+
+testRetrieval();
+
+Step 6: Updating a Compact Disc
+async function updateCompactDisc(db) {
+    const [result] = await db.execute("UPDATE compact_discs SET title = 'New Title' WHERE id = 10");
+    console.log(`Updated ${result.affectedRows} row(s)`);
+}
+
+
+Step 7: Testing the Update
+async function testUpdate() {
+    const db = await connectToDatabase();
+    await updateCompactDisc(db);
+    await retrieveCompactDiscs(db);  // Verify update
+    await db.end();
+}
+
+testUpdate();
+
+
+Step 8: Deleting a Compact Disc
+async function deleteCompactDisc(db) {
+    const [result] = await db.execute("DELETE FROM compact_discs WHERE id = 10");
+    console.log(`Deleted ${result.affectedRows} row(s)`);
+}
+
+Step 9: Testing the Deletion
+async function testDeletion() {
+    const db = await connectToDatabase();
+    await deleteCompactDisc(db);
+    await retrieveCompactDiscs(db);  // Verify deletion
+    await db.end();
+}
+
+testDeletion();
+
+
+Step 10: Inserting a New Compact Disc
+async function insertCompactDisc(db) {
+    const [result] = await db.execute("INSERT INTO compact_discs (title, artist, price, tracks) VALUES ('New Disc', 'New Artist', 12.99, 10)");
+    console.log(`Inserted ${result.affectedRows} row(s)`);
+}
+
+
+Step 11: Testing the Insertion
+async function testInsertion() {
+    const db = await connectToDatabase();
+    await insertCompactDisc(db);
+    await retrieveCompactDiscs(db);  // Verify insertion
+    await db.end();
+}
+
+testInsertion();
+
+
+Complete JavaScript File
+Below is the complete JavaScript file for your reference:
+const mysql = require('mysql2/promise');
+
+async function connectToDatabase() {
+    const db = await mysql.createConnection({
+        host: 'localhost',
+        user: 'root',
+        password: 'c0nygre',
+        database: 'conygre'
+    });
+    return db;
+}
+
+async function retrieveCompactDiscs(db) {
+    const [rows] = await db.execute('SELECT * FROM compact_discs');
+    console.log("Retrieved Compact Discs:");
+    rows.forEach(cd => {
+        console.log(cd);
+    });
+}
+
+async function updateCompactDisc(db) {
+    const [result] = await db.execute("UPDATE compact_discs SET title = 'New Title' WHERE id = 10");
+    console.log(`Updated ${result.affectedRows} row(s)`);
+}
+
+async function deleteCompactDisc(db) {
+    const [result] = await db.execute("DELETE FROM compact_discs WHERE id = 10");
+    console.log(`Deleted ${result.affectedRows} row(s)`);
+}
+
+async function insertCompactDisc(db) {
+    const [result] = await db.execute("INSERT INTO compact_discs (title, artist, price, tracks) VALUES ('New Disc', 'New Artist', 12.99, 10)");
+    console.log(`Inserted ${result.affectedRows} row(s)`);
+}
+
+async function testRetrieval() {
+    const db = await connectToDatabase();
+    await retrieveCompactDiscs(db);
+    await db.end();
+}
+
+async function testUpdate() {
+    const db = await connectToDatabase();
+    await updateCompactDisc(db);
+    await retrieveCompactDiscs(db);
+    await db.end();
+}
+
+async function testDeletion() {
+    const db = await connectToDatabase();
+    await deleteCompactDisc(db);
+    await retrieveCompactDiscs(db);
+    await db.end();
+}
+
+async function testInsertion() {
+    const db = await connectToDatabase();
+    await insertCompactDisc(db);
+    await retrieveCompactDiscs(db);
+    await db.end();
+}
+
+// Call the desired test function
+testRetrieval();
+// testUpdate();
+// testDeletion();
+// testInsertion();
+
